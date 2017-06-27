@@ -1,0 +1,127 @@
+#!/bin/sh
+
+
+## Create user torrent
+addgroup -g ${GID} torrent && adduser -h /home/torrent -s /bin/sh -G torrent -D -u ${UID} torrent
+
+
+## Create require folder
+mkdir -p /data/torrents /data/.watch /data/.session /config/rtorrent /config/rutorrent /config/custom_plugins /config/custom_themes
+
+## Generate configuration
+if [ $WEBROOT != "/" ]; then
+    sed -i 's|<webroot>|'${WEBROOT}'|g' /etc/nginx/nginx.conf
+    sed -i 's|<webroot_rpc>|'${WEBROOT}'|g' /etc/nginx/nginx.conf
+    sed -i 's|<folder>||g' /etc/nginx/nginx.conf
+    mv /var/www/html/torrent /var/www/html${WEBROOT}
+    sed -i 's|<webroot>|'${WEBROOT}'/|g' /var/www/html${WEBROOT}/conf/config.php
+
+    ## Externalize rutorrent configuration
+    if [ -d /config/rutorrent/conf ]; then 
+        rm -rf /var/www/html${WEBROOT}/conf 
+        ln -s /config/rutorrent/conf /var/www/html${WEBROOT}/conf
+    else
+        mv /var/www/html${WEBROOT}/conf /config/rutorrent/
+        ln -s /config/rutorrent/conf /var/www/html${WEBROOT}/conf        
+    fi
+    ## Externalize rutorrent share
+    if [ -d /config/rutorrent/share ]; then 
+        rm -rf /var/www/html${WEBROOT}/share 
+        ln -s /config/rutorrent/share /var/www/html${WEBROOT}/share
+    else
+        mv /var/www/html${WEBROOT}/share /config/rutorrent/
+        ln -s /config/rutorrent/share /var/www/html${WEBROOT}/share        
+    fi
+    ## Add custom plugins
+    [ "$(ls /config/custom_plugins/)" ] && for custom_plugin in $(ls /config/custom_plugins); do
+        if [ ! -d /var/www/html${WEBROOT}/plugins/${custom_plugin} ]; then
+            ln -s /config/custom_plugins/${custom_plugin} /var/www/html${WEBROOT}/plugins/${custom_plugin}
+        fi
+    done
+    ## Add custom themes
+    [ "$(ls /config/custom_themes/)" ] && for custom_theme in $(ls /config/custom_themes); do
+        if [ ! -d /var/www/html${WEBROOT}/theme/themes/${custom_theme} ]; then
+            ln -s /config/custom_themes/${custom_theme} /var/www/html${WEBROOT}/theme/themes/${custom_theme}
+        fi
+    done
+else
+    sed -i 's|<webroot>|/|g' /etc/nginx/nginx.conf
+    sed -i 's|<webroot_rpc>/|/|g' /etc/nginx/nginx.conf
+    sed -i 's|<folder>|/torrent|g' /etc/nginx/nginx.conf
+    sed -i 's|<webroot>|/|g' /var/www/html/torrent/conf/config.php
+
+    ## Externalize rutorrent configuration
+    if [ -d /config/rutorrent/conf ]; then 
+        rm -rf /var/www/html/torrent/conf 
+        ln -s /config/rutorrent/conf /var/www/html/torrent/conf
+    else
+        mv /var/www/html/torrent/conf /config/rutorrent/
+        ln -s /config/rutorrent/conf /var/www/html/torrent/conf        
+    fi
+    ## Externalize rutorrent share
+    if [ -d /config/rutorrent/share ]; then 
+        rm -rf /var/www/html/torrent/share 
+        ln -s /config/rutorrent/share /var/www/html/torrent/share
+    else
+        mv /var/www/html/torrent/share /config/rutorrent/
+        ln -s /config/rutorrent/share /var/www/html/torrent/share        
+    fi
+    ## Add custom plugins
+    [ "$(ls /config/custom_plugins/)" ] && for custom_plugin in $(ls /config/custom_plugins); do
+        if [ ! -d /var/www/html/torrent/plugins/${custom_plugin} ]; then
+            ln -s /config/custom_plugins/${custom_plugin} /var/www/html/torrent/plugins/${custom_plugin}
+        fi
+    done
+    ## Add custom themes
+    [ "$(ls /config/custom_themes/)" ] && for custom_theme in $(ls /config/custom_themes); do
+        if [ ! -d /var/www/html/torrent/theme/themes/${custom_theme} ]; then
+            ln -s /config/custom_themes/${custom_theme} /var/www/html/torrent/theme/themes/${custom_theme}
+        fi
+    done
+fi
+
+
+sed -i 's|<PORT_RTORRENT>|'$PORT_RTORRENT'|g' /home/torrent/.rtorrent.rc
+
+## externalize rtorrent configuration
+if [ ! -e /config/rtorrent/.rtorrent.rc ]; then
+    mv /home/torrent/.rtorrent.rc /config/rtorrent/.rtorrent.rc
+    ln -s /config/rtorrent/.rtorrent.rc /home/torrent/.rtorrent.rc
+else
+    rm -f /home/torrent/.rtorrent.rc
+    ln -s /config/rtorrent/.rtorrent.rc /home/torrent/.rtorrent.rc
+fi
+
+## Filebot
+if [ -e /filebot ]; then
+    mkdir -p /data/Media/Movies
+    mkdir -p /data/Media/TV
+    mkdir -p /data/Media/Animes
+    mkdir -p /data/Media/Music
+    chown -R torrent:torrent /filebot
+
+    grep "system.method.set_key=event.download.finished" /home/torrent/.rtorrent.rc > /dev/null 2>&1
+    [ $? -ne 0 ] && echo 'system.method.set_key=event.download.finished,filebot,"execute={/usr/local/bin/postdl,$d.get_base_path=,$d.get_name=,$d.get_custom1=}"' >> /home/torrent/.rtorrent.rc
+
+    grep "system.method.set_key=event.download.erased" /home/torrent/.rtorrent.rc > /dev/null 2>&1
+    [ $? -ne 0 ] && echo 'system.method.set_key=event.download.erased,filebot_cleaner,"execute=/usr/local/bin/postrm"' >> /home/torrent/.rtorrent.rc
+
+    sed -e 's#<FILEBOT_RENAME_MOVIES>#'"$FILEBOT_RENAME_MOVIES"'#' \
+        -e 's#<FILEBOT_RENAME_METHOD>#'"$FILEBOT_RENAME_METHOD"'#' \
+        -e 's#<FILEBOT_RENAME_MUSICS>#'"$FILEBOT_RENAME_MUSICS"'#' \
+        -e 's#<FILEBOT_RENAME_SERIES>#'"$FILEBOT_RENAME_SERIES"'#' \
+        -e 's#<FILEBOT_RENAME_ANIMES>#'"$FILEBOT_RENAME_ANIMES"'#' -i /usr/local/bin/postdl
+
+    chmod +x /usr/local/bin/post*
+fi
+
+
+chown -R torrent:torrent /data /var/www /etc/s6.d /home/torrent /var/lib/nginx /etc/php7 /etc/nginx /var/log /tmp /config
+
+rm -f /data/.session/rtorrent.lock
+
+if [ $# -eq 0 ]; then
+    exec su-exec torrent:torrent /bin/s6-svscan /etc/s6.d
+else
+    exec su-exec torrent:torrent $@
+fi
