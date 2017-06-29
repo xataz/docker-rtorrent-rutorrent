@@ -35,7 +35,6 @@ f_log INF "Build xataz/rtorrent-rutorrent:latest ..."
 docker build -t xataz/rtorrent-rutorrent:latest . > /tmp/build.log 2>&1
 if [ $? -eq 0 ]; then
     f_log SUC "Build xataz/rtorrent-rutorrent:latest successful"
-    echo xataz/rtorrent-rutorrent:latest >> .tmp/images.txt
 else
     f_log ERR "Build xataz/rtorrent-rutorrent:latest failed"
     cat /tmp/build.log
@@ -47,8 +46,6 @@ docker build --build-arg WITH_FILEBOT=YES -t xataz/rtorrent-rutorrent:filebot . 
 if [ $? -eq 0 ]; then
     f_log SUC "Build xataz/rtorrent-rutorrent:filebot successful"
     docker tag xataz/rtorrent-rutorrent:filebot xataz/rtorrent-rutorrent:latest-filebot
-    echo xataz/rtorrent-rutorrent:filebot >> .tmp/images.txt
-    echo xataz/rtorrent-rutorrent:latest-filebot >> .tmp/images.txt
 else
     f_log ERR "Build xataz/rtorrent-rutorrent:filebot failed"
     cat /tmp/build.log
