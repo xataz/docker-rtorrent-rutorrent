@@ -1,5 +1,7 @@
 #!/bin/sh
 
+plowmod --install
+
 export TERM=xterm
 
 exec s6-fghack screen -dmS rtorrent rtorrent

@@ -53,6 +53,8 @@ RUN export BUILD_DEPS="build-base \
                 xz \
                 screen \
                 findutils \
+                bzip2 \
+                bash \
     && cd /tmp \
     && git clone https://github.com/esmil/mktorrent \
     && svn checkout http://svn.code.sf.net/p/xmlrpc-c/code/stable xmlrpc-c \
@@ -100,10 +102,14 @@ RUN export BUILD_DEPS="build-base \
     && mkdir -p /var/www \
     && git clone https://github.com/Novik/ruTorrent.git /var/www/html/rutorrent \
     && git clone https://github.com/nelu/rutorrent-thirdparty-plugins /tmp/rutorrent-thirdparty-plugins \
-    && mv /tmp/rutorrent-thirdparty-plugins/* /var/www/html/rutorrent/plugins/ \
+    && git clone https://github.com/mcrapet/plowshare /tmp/plowshare \
     && git clone https://github.com/xombiemp/rutorrentMobile.git /var/www/html/rutorrent/plugins/mobile \    
     && git clone https://github.com/Phlooo/ruTorrent-MaterialDesign.git /var/www/html/rutorrent/plugins/theme/themes/materialdesign \
+    && sed -i 's#.*/usr/bin/rar.*##' /tmp/rutorrent-thirdparty-plugins/filemanager/conf.php \
+    && mv /tmp/rutorrent-thirdparty-plugins/* /var/www/html/rutorrent/plugins/ \
     && mv /var/www/html/rutorrent /var/www/html/torrent \
+    && cd /tmp/plowshare \
+    && make \
     && strip -s /usr/local/bin/rtorrent \
     && strip -s /usr/local/bin/mktorrent \
     && strip -s /usr/local/bin/mediainfo \
