@@ -1,8 +1,16 @@
 # RuTorrent Image
 
+[![Build Status](https://drone.xataz.net/api/badges/xataz/docker-rtorrent-rutorrent/status.svg)](https://drone.xataz.net/xataz/docker-rtorrent-rutorrent)
+
+[![](https://images.microbadger.com/badges/version/xataz/rtorrent-rutorrent:latest.svg)](https://microbadger.com/images/xataz/rtorrent-rutorrent:latest "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/xataz/rtorrent-rutorrent:latest.svg)](https://microbadger.com/images/xataz/rtorrent-rutorrent:latest "Get your own image badge on microbadger.com")
+
+[![](https://images.microbadger.com/badges/version/xataz/rtorrent-rutorrent:filebot.svg)](https://microbadger.com/images/xataz/rtorrent-rutorrent:filebot "Get your own version badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/xataz/rtorrent-rutorrent:filebot.svg)](https://microbadger.com/images/xataz/rtorrent-rutorrent:filebot "Get your own image badge on microbadger.com")
+
+
 > This image is build and push with [drone.io](https://github.com/drone/drone), a circle-ci like self-hosted.
 > If you don't trust, you can build yourself.
-
 
 ## Features
 * Based on Alpine Linux.
@@ -15,8 +23,8 @@
 
 
 ## Tag available
-* latest [(rutorrent/latest/Dockerfile)](https://github.com/xataz/dockerfiles/blob/master/rutorrent/latest/Dockerfile)
-* latest-filebot, filebot [(rutorrent/latest-filebot/Dockerfile)](https://github.com/xataz/dockerfiles/blob/master/rutorrent/latest-filebot/Dockerfile)
+* latest [(Dockerfile)](https://github.com/xataz/docker-rtorrent-rutorrent/Dockerfile)
+* latest-filebot, filebot [(Dockerfile)](https://github.com/xataz/docker-rtorrent-rutorrent/Dockerfile)
 
 ## Description
 What is [RuTorrent](https://github.com/Novik/ruTorrent) ?

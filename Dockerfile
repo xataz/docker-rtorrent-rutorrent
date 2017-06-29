@@ -1,7 +1,7 @@
 FROM xataz/alpine:3.6
 
 ARG BUILD_CORES
-ARG MEDIAINFO_VER=0.7.95
+ARG MEDIAINFO_VER=0.7.96
 ARG RTORRENT_VER=0.9.6
 ARG LIBTORRENT_VER=0.13.6
 ARG LIBZEN_VER=0.4.31
@@ -15,7 +15,7 @@ ENV UID=991 \
 LABEL Description="rutorrent based on alpine" \
       tags="latest" \
       maintainer="xataz <https://github.com/xataz>" \
-      build_ver="2017062601"
+      build_ver="2017062901"
 
 RUN export BUILD_DEPS="build-base \
                         git \
@@ -52,6 +52,7 @@ RUN export BUILD_DEPS="build-base \
                 tar \
                 xz \
                 screen \
+                findutils \
     && cd /tmp \
     && git clone https://github.com/esmil/mktorrent \
     && svn checkout http://svn.code.sf.net/p/xmlrpc-c/code/stable xmlrpc-c \
@@ -98,7 +99,9 @@ RUN export BUILD_DEPS="build-base \
     && make install \
     && mkdir -p /var/www \
     && git clone https://github.com/Novik/ruTorrent.git /var/www/html/rutorrent \
-    && git clone https://github.com/xombiemp/rutorrentMobile.git /var/www/html/rutorrent/plugins/mobile \
+    && git clone https://github.com/nelu/rutorrent-thirdparty-plugins /tmp/rutorrent-thirdparty-plugins \
+    && mv /tmp/rutorrent-thirdparty-plugins/* /var/www/html/rutorrent/plugins/ \
+    && git clone https://github.com/xombiemp/rutorrentMobile.git /var/www/html/rutorrent/plugins/mobile \    
     && git clone https://github.com/Phlooo/ruTorrent-MaterialDesign.git /var/www/html/rutorrent/plugins/theme/themes/materialdesign \
     && mv /var/www/html/rutorrent /var/www/html/torrent \
     && strip -s /usr/local/bin/rtorrent \
