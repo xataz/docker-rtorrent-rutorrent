@@ -38,13 +38,17 @@ f_log INF "Wait 10 sec ..."
 sleep 10
 
 docker ps | grep test_torrent_${DATE_TEST} 
-[ $? -ne 0 ] && f_log ERR "Run container failed" && exit 1 || f_log SUC "Run container successful" 
-
+if [ $? -ne 0 ]; then 
+    f_log ERR "Run container failed"
+    exit 1
+else
+    f_log SUC "Run container successful" 
+fi
 
 f_log INF "Test rutorrent ..."
-docker exec -ti test_torrent_${DATE_TEST} curl http://localhost:8080 | grep "404 Not Found"
+docker exec -i test_torrent_${DATE_TEST} curl http://localhost:8080 | grep "404 Not Found"
 if [ $? -ne 0 ]; then
-     f_log SUC "rutorrent is ok" 
+    f_log SUC "rutorrent is ok" 
 else
     f_log ERR "rutorrent is ko"
     exit 1
@@ -52,4 +56,9 @@ fi
 
 f_log INT "Delete container ..."
 docker rm -f test_torrent_${DATE_TEST}
-[ $? -ne 0 ] && f_log ERR "Delete container failed" && exit 1 || f_log SUC "Delete container successful" 
+if [ $? -ne 0 ]; then 
+    f_log ERR "Delete container failed"
+    exit 1
+else
+    f_log SUC "Delete container successful"
+fi
