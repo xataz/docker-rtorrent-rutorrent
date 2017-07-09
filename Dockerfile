@@ -15,10 +15,9 @@ ENV UID=991 \
 LABEL Description="rutorrent based on alpine" \
       tags="latest" \
       maintainer="xataz <https://github.com/xataz>" \
-      build_ver="2017062901"
+      build_ver="2017070901"
 
 RUN export BUILD_DEPS="build-base \
-                        git \
                         libtool \
                         automake \
                         autoconf \
@@ -55,6 +54,7 @@ RUN export BUILD_DEPS="build-base \
                 findutils \
                 bzip2 \
                 bash \
+                git \
     && cd /tmp \
     && git clone https://github.com/esmil/mktorrent \
     && svn checkout http://svn.code.sf.net/p/xmlrpc-c/code/stable xmlrpc-c \
