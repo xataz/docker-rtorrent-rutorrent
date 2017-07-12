@@ -117,7 +117,11 @@ if [ -e /filebot ]; then
     chmod +x /usr/local/bin/post*
 fi
 
-su-exec torrent:torrent plowmod --install
+if [ -e /home/torrent/.config/plowshare ]; then
+    su-exec torrent:torrent plowmod --update
+else
+    su-exec torrent:torrent plowmod --install
+fi
 
 chown -R torrent:torrent /data /var/www /etc/s6.d /home/torrent /var/lib/nginx /etc/php7 /etc/nginx /var/log /tmp /config
 
