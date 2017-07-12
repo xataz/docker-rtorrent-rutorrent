@@ -9,11 +9,13 @@ addgroup -g ${GID} torrent && adduser -h /home/torrent -s /bin/sh -G torrent -D 
 mkdir -p /data/torrents /data/.watch /data/.session /config/rtorrent /config/rutorrent /config/custom_plugins /config/custom_themes
 
 ## Generate configuration
-if [ $WEBROOT != "/" ]; then
+if [ "$WEBROOT" != "/" ]; then
     sed -i 's|<webroot>|'${WEBROOT}'|g' /etc/nginx/nginx.conf
     sed -i 's|<webroot_rpc>|'${WEBROOT}'|g' /etc/nginx/nginx.conf
     sed -i 's|<folder>||g' /etc/nginx/nginx.conf
-    mv /var/www/html/torrent /var/www/html${WEBROOT}
+    if [ "$WEBROOT" != "/torrent" ]; then
+        mv /var/www/html/torrent /var/www/html${WEBROOT}
+    fi
     sed -i 's|<webroot>|'${WEBROOT}'/|g' /var/www/html${WEBROOT}/conf/config.php
 
     ## Externalize rutorrent configuration
@@ -115,6 +117,7 @@ if [ -e /filebot ]; then
     chmod +x /usr/local/bin/post*
 fi
 
+su-exec torrent:torrent plowmod --install
 
 chown -R torrent:torrent /data /var/www /etc/s6.d /home/torrent /var/lib/nginx /etc/php7 /etc/nginx /var/log /tmp /config
 
