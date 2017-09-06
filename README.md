@@ -64,6 +64,7 @@ docker build -t xataz/rtorrent-rutorrent:custom --build-arg WITH_FILEBOT=YES --b
 * GID : Choose gid for launch rtorrent (default : 991)
 * WEBROOT : (default : /)
 * PORT_RTORRENT : (default : 45000)
+* DHT_RTORRENT : (default : off)
 * FILEBOT_RENAME_METHOD : Method for rename media (default : symlink)
 * FILEBOT_RENAME_MOVIES : Regex for rename movies (default : "{n} ({y})")
 * FILEBOT_RENAME_MUSICS : Regex for rename musics (default : "{n}/{fn}")
