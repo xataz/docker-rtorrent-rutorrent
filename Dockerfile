@@ -16,7 +16,7 @@ ENV UID=991 \
 LABEL Description="rutorrent based on alpine" \
       tags="latest" \
       maintainer="xataz <https://github.com/xataz>" \
-      build_ver="2017090602"
+      build_ver="2017090603"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
@@ -46,7 +46,7 @@ RUN export BUILD_DEPS="build-base \
                 php7-json \
                 php7-opcache \
                 php7-apcu \
-                php7-mbstring
+                php7-mbstring \
                 libressl \
                 file \
                 findutils \
