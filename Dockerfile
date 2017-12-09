@@ -16,7 +16,7 @@ ENV UID=991 \
 LABEL Description="rutorrent based on alpine" \
       tags="latest" \
       maintainer="xataz <https://github.com/xataz>" \
-      build_ver="2017120901"
+      build_ver="2017120902"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
@@ -24,12 +24,11 @@ RUN export BUILD_DEPS="build-base \
                         autoconf \
                         wget \
                         subversion \
-                        cppunit-dev \
                         libressl-dev \
                         ncurses-dev \
                         curl-dev \
                         zlib-dev" \
-    && apk add -U ${BUILD_DEPS} \
+    && apk add -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main -U ${BUILD_DEPS} \
                 ffmpeg \
                 ca-certificates \
                 gzip \
@@ -57,6 +56,9 @@ RUN export BUILD_DEPS="build-base \
                 bzip2 \
                 bash \
                 git \
+                sox \
+                cppunit-dev==1.13.2-r1 \
+                cppunit==1.13.2-r1 \
     && cd /tmp \
     && git clone https://github.com/esmil/mktorrent \
     && svn checkout http://svn.code.sf.net/p/xmlrpc-c/code/stable xmlrpc-c \
@@ -116,7 +118,7 @@ RUN export BUILD_DEPS="build-base \
     && strip -s /usr/local/bin/rtorrent \
     && strip -s /usr/local/bin/mktorrent \
     && strip -s /usr/local/bin/mediainfo \
-    && apk del ${BUILD_DEPS} \
+    && apk del -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main ${BUILD_DEPS} cppunit-dev \
     && rm -rf /var/cache/apk/* /tmp/* \
     && deluser svn \
     && delgroup svnusers
