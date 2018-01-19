@@ -107,15 +107,23 @@ $ git clone https://github.com/Gyran/rutorrent-ratiocolor.git ./ratiocolor
 
 Run container :
 ```shell
-docker run -dt -p 80:8080 \
-	  -v /docker/data:/data \
-	  -v /docker/config:/config \
-	  -e UID=1001 \
-	  -e GID=1001 \
-    -e WEBROOT=/rutorrent \
-	xataz/rtorrent-rutorrent:filebot
+docker run -dt 
+  -p 9080:8080 \
+  -p 6881:6881 \
+  -p 6881:6881/udp \
+  -p 127.0.0.1:5000:5000 \
+  -e WEBROOT=/rutorrent  \
+  -e DHT_RTORRENT=on     \
+  -e PORT_RTORRENT=6881  \
+  -e FILEBOT_RENAME_METHOD=move \
+  -e FILEBOT_RENAME_SERIS="{n}/Season {s}/{n} - {s00e00} - {t}" \
+  -e UID=1001 \
+  -e GID=1001 \
+  -v rutorrent-data-volume:/data   \
+  -v /docker/config:/config        \
+  xataz/rtorrent-rutorrent:filebot
 ```
-URI access : http://XX.XX.XX.XX/rutorrent
+URI access : http://XX.XX.XX.XX:9080/rutorrent
 
 ## Contributing
 Any contributions, are very welcome !
