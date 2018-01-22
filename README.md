@@ -116,7 +116,7 @@ docker run -dt
   -e DHT_RTORRENT=on     \
   -e PORT_RTORRENT=6881  \
   -e FILEBOT_RENAME_METHOD=move \
-  -e FILEBOT_RENAME_SERIS="{n}/Season {s}/{n} - {s00e00} - {t}" \
+  -e FILEBOT_RENAME_SERIES="{n}/Season {s}/{n} - {s00e00} - {t}" \
   -e UID=1001 \
   -e GID=1001 \
   -v rutorrent-data-volume:/data   \
