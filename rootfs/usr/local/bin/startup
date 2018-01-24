@@ -1,14 +1,58 @@
 #!/bin/sh
 
 
-## Create user torrent
-addgroup -g ${GID} torrent && adduser -h /home/torrent -s /bin/sh -G torrent -D -u ${UID} torrent
+## Variables
+CSI="\033["
+CEND="${CSI}0m"
+CRED="${CSI}1;31m"
+CGREEN="${CSI}1;32m"
+CYELLOW="${CSI}1;33m"
+CBLUE="${CSI}1;34m"
 
+
+## Functions
+f_log() {
+    LOG_TYPE=$1
+    LOG_MESSAGE=$2
+
+    case "${LOG_TYPE}" in
+    "INF")
+        echo -e "${CBLUE}=INF= $(date +%Y/%m/%d-%H:%M:%S) ${LOG_MESSAGE}${CEND}"
+    ;;
+    "SUC")
+        echo -e "${CGREEN}=SUC= $(date +%Y/%m/%d-%H:%M:%S) ${LOG_MESSAGE}${CEND}"
+    ;;
+    "WRN")
+        echo -e "${CYELLOW}=WRN= $(date +%Y/%m/%d-%H:%M:%S) ${LOG_MESSAGE}${CEND}"
+    ;;
+    "ERR")
+        echo -e "${CRED}=ERR= $(date +%Y/%m/%d-%H:%M:%S) ${LOG_MESSAGE}${CEND}"
+    ;;
+    esac
+}
+
+## Create user torrent
+f_log INF "Create user torrent ..."
+if [ "$(grep ':'${GID}':' /etc/group)" == "" ]; then
+    addgroup -g ${GID} torrent
+    GROUP_NAME=torrent
+else
+    GROUP_NAME=$(grep ':'${GID}':' /etc/group | cut -d: -f1)
+fi
+if [ "$(grep ${UID} /etc/passwd)" == "" ]; then
+    adduser -h /home/torrent -s /bin/sh -G ${GROUP_NAME} -D -u ${UID} torrent
+    USER_NAME=torrent
+else
+    USER_NAME=$(grep ${UID} /etc/passwd | cut -d: -f1)
+fi
+f_log SUC "Create user torrent done"
 
 ## Create require folder
-mkdir -p /data/torrents /data/.watch /data/.session /config/rtorrent /config/rutorrent /config/custom_plugins /config/custom_themes
+
+mkdir -p /data/torrents /data/.watch /data/.session /config/rtorrent /config/rutorrent /config/custom_plugins /config/custom_themes /home/torrent
 
 ## Generate configuration
+f_log INF "Generate configuration ..."
 if [ "$WEBROOT" != "/" ]; then
     sed -i 's|<webroot>|'${WEBROOT}'|g' /etc/nginx/nginx.conf
     sed -i 's|<webroot_rpc>|'${WEBROOT}'|g' /etc/nginx/nginx.conf
@@ -100,7 +144,7 @@ if [ -e /filebot ]; then
     mkdir -p /data/Media/TV
     mkdir -p /data/Media/Animes
     mkdir -p /data/Media/Music
-    chown -R torrent:torrent /filebot
+    chown -R ${USER_NAME}:${GROUP_NAME} /filebot
 
     grep "system.method.set_key=event.download.finished" /home/torrent/.rtorrent.rc > /dev/null 2>&1
     [ $? -ne 0 ] && echo 'system.method.set_key=event.download.finished,filebot,"execute={/usr/local/bin/postdl,$d.get_base_path=,$d.get_name=,$d.get_custom1=}"' >> /home/torrent/.rtorrent.rc
@@ -116,19 +160,28 @@ if [ -e /filebot ]; then
 
     chmod +x /usr/local/bin/post*
 fi
+f_log SUC "Generate configuration done"
 
+f_log INF "Install plowshare ..."
 if [ -e /home/torrent/.config/plowshare ]; then
-    su-exec torrent:torrent plowmod --update
+    su-exec ${USER_NAME}:${GROUP_NAME} plowmod --update > /dev/null 2>&1
+    res=$?
 else
-    su-exec torrent:torrent plowmod --install
+    su-exec ${USER_NAME}:${GROUP_NAME} plowmod --install > /dev/null 2>&1
+    res=$?
 fi
+[[ $? == 0 ]]; f_log SUC "Install plowshare done" || (f_log ERR "Install plowshare failed" && exit 1)
 
-chown -R torrent:torrent /data /var/www /etc/s6.d /home/torrent /var/lib/nginx /etc/php7 /etc/nginx /var/log /tmp /config
+f_log INF "Apply permissions ..."
+for folder in /data /var/www /home/torrent /var/lib/nginx /etc/php7 /etc/nginx /var/log /tmp /config /etc/supervisor; do
+    find ${folder} ! -user torrent -exec chown ${USER_NAME}:${GROUP_NAME} {} \;
+done
+f_log SUC "Apply permissions done"
 
 rm -f /data/.session/rtorrent.lock
 
 if [ $# -eq 0 ]; then
-    exec su-exec torrent:torrent /bin/s6-svscan /etc/s6.d
+    exec su-exec ${USER_NAME}:${GROUP_NAME} /sbin/tini -- supervisord -c /etc/supervisor/supervisord.conf
 else
-    exec su-exec torrent:torrent $@
+    exec su-exec ${USER_NAME}:${GROUP_NAME} /sbin/tini -- $@
 fi

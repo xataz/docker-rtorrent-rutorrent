@@ -16,7 +16,11 @@ ENV UID=991 \
 LABEL Description="rutorrent based on alpine" \
       tags="latest" \
       maintainer="xataz <https://github.com/xataz>" \
-      build_ver="2017120902"
+      mediainfo_version="${MEDIAINFO_VER}" \
+      libtorrent_version="${LIBTORRENT_VER}" \
+      rtorrent_version="${RTORRENT_VER}" \
+      libzen_version="${LIBZEN_VER}" \
+      build_ver="2018012401"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
@@ -28,7 +32,8 @@ RUN export BUILD_DEPS="build-base \
                         ncurses-dev \
                         curl-dev \
                         zlib-dev" \
-    && apk add -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main -U ${BUILD_DEPS} \
+    ## Download Package
+    && apk add -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main --no-cache ${BUILD_DEPS} \
                 ffmpeg \
                 ca-certificates \
                 gzip \
@@ -36,7 +41,8 @@ RUN export BUILD_DEPS="build-base \
                 unrar \
                 curl \
                 c-ares \
-                s6 \
+                tini \
+                supervisor \
                 geoip \
                 su-exec \
                 nginx \
@@ -59,26 +65,30 @@ RUN export BUILD_DEPS="build-base \
                 sox \
                 cppunit-dev==1.13.2-r1 \
                 cppunit==1.13.2-r1 \
+    ## Download Sources
+    && git clone https://github.com/esmil/mktorrent /tmp/mktorrent \
+    && svn checkout http://svn.code.sf.net/p/xmlrpc-c/code/stable /tmp/xmlrpc-c \
+    && git clone -b ${LIBTORRENT_VER} https://github.com/rakshasa/libtorrent.git /tmp/libtorrent \
+    && git clone -b ${RTORRENT_VER} https://github.com/rakshasa/rtorrent.git /tmp/rtorrent \
+    && wget http://mediaarea.net/download/binary/mediainfo/${MEDIAINFO_VER}/MediaInfo_CLI_${MEDIAINFO_VER}_GNU_FromSource.tar.gz -O /tmp/MediaInfo_CLI_${MEDIAINFO_VER}_GNU_FromSource.tar.gz \
+    && wget http://mediaarea.net/download/binary/libmediainfo0/${MEDIAINFO_VER}/MediaInfo_DLL_${MEDIAINFO_VER}_GNU_FromSource.tar.gz -O /tmp/MediaInfo_DLL_${MEDIAINFO_VER}_GNU_FromSource.tar.gz \
+    && wget http://downloads.sourceforge.net/zenlib/libzen_${LIBZEN_VER}.tar.gz -O /tmp/libzen_${LIBZEN_VER}.tar.gz \
     && cd /tmp \
-    && git clone https://github.com/esmil/mktorrent \
-    && svn checkout http://svn.code.sf.net/p/xmlrpc-c/code/stable xmlrpc-c \
-    && git clone -b ${LIBTORRENT_VER} https://github.com/rakshasa/libtorrent.git \
-    && git clone -b ${RTORRENT_VER} https://github.com/rakshasa/rtorrent.git \
-    && wget http://mediaarea.net/download/binary/mediainfo/${MEDIAINFO_VER}/MediaInfo_CLI_${MEDIAINFO_VER}_GNU_FromSource.tar.gz \
-    && wget http://mediaarea.net/download/binary/libmediainfo0/${MEDIAINFO_VER}/MediaInfo_DLL_${MEDIAINFO_VER}_GNU_FromSource.tar.gz \
-    && wget http://downloads.sourceforge.net/zenlib/libzen_${LIBZEN_VER}.tar.gz \
     && tar xzf libzen_${LIBZEN_VER}.tar.gz \
     && tar xzf MediaInfo_DLL_${MEDIAINFO_VER}_GNU_FromSource.tar.gz \
     && tar xzf MediaInfo_CLI_${MEDIAINFO_VER}_GNU_FromSource.tar.gz \
+    ## Compile ZenLib
     && cd /tmp/ZenLib/Project/GNU/Library \
     && ./autogen \
     && ./configure --prefix=/usr/local \
                     --enable-shared \
                     --disable-static \
     && make && make install \
+    ## Compile mktorrent
     && cd /tmp/mktorrent \
     && make -j ${BUILD_CORES-$(grep -c "processor" /proc/cpuinfo)} \
     && make install \
+    ## Compile Mediainfo
     && cd  /tmp/MediaInfo_DLL_GNU_FromSource \
     && ./SO_Compile.sh \
     && cd /tmp/MediaInfo_DLL_GNU_FromSource/ZenLib/Project/GNU/Library \
@@ -89,20 +99,24 @@ RUN export BUILD_DEPS="build-base \
     && ./CLI_Compile.sh \
     && cd /tmp/MediaInfo_CLI_GNU_FromSource/MediaInfo/Project/GNU/CLI \
     && make install \
+    ## Compile xmlrpc-c
     && cd /tmp/xmlrpc-c \
     && ./configure \
     && make -j ${NB_CORES} \
     && make install \
+    ## Compile libtorrent
     && cd /tmp/libtorrent \
     && ./autogen.sh \
     && ./configure \
     && make -j ${BUILD_CORES-$(grep -c "processor" /proc/cpuinfo)} \
     && make install \
+    ## Compile rtorrent
     && cd /tmp/rtorrent \
     && ./autogen.sh \
     && ./configure --with-xmlrpc-c \
     && make -j ${BUILD_CORES-$(grep -c "processor" /proc/cpuinfo)} \
     && make install \
+    ## Install Rutorrent
     && mkdir -p /var/www \
     && git clone https://github.com/Novik/ruTorrent.git /var/www/html/rutorrent \
     && git clone https://github.com/nelu/rutorrent-thirdparty-plugins /tmp/rutorrent-thirdparty-plugins \
@@ -113,19 +127,24 @@ RUN export BUILD_DEPS="build-base \
     && sed -i 's#.*/usr/bin/rar.*##' /tmp/rutorrent-thirdparty-plugins/filemanager/conf.php \
     && mv /tmp/rutorrent-thirdparty-plugins/* /var/www/html/rutorrent/plugins/ \
     && mv /var/www/html/rutorrent /var/www/html/torrent \
+    ## Install plowshare
     && cd /tmp/plowshare \
     && make \
+    ## cleanup
     && strip -s /usr/local/bin/rtorrent \
     && strip -s /usr/local/bin/mktorrent \
     && strip -s /usr/local/bin/mediainfo \
-    && apk del -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main ${BUILD_DEPS} cppunit-dev \
-    && rm -rf /var/cache/apk/* /tmp/* \
+    && apk del -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main --no-cache ${BUILD_DEPS} cppunit-dev \
+    && rm -rf /tmp/* \
     && deluser svn \
     && delgroup svnusers
 
 ARG WITH_FILEBOT=NO
 ARG FILEBOT_VER=4.7.9
 ARG CHROMAPRINT_VER=1.4.2
+
+label filebot_version="${FILEBOT_VER}" \
+      chromaprint_ver="${CHROMAPRINT_VER}"
 
 ENV FILEBOT_RENAME_METHOD="symlink" \
     FILEBOT_RENAME_MOVIES="{n} ({y})" \
@@ -134,7 +153,7 @@ ENV FILEBOT_RENAME_METHOD="symlink" \
     FILEBOT_RENAME_MUSICS="{n}/{fn}"
 
 RUN if [ "${WITH_FILEBOT}" == "YES" ]; then \
-        apk add -U openjdk8-jre java-jna-native binutils wget \
+        apk add --no-cache openjdk8-jre java-jna-native binutils wget \
         && mkdir /filebot \
         && cd /filebot \
         && wget http://downloads.sourceforge.net/project/filebot/filebot/FileBot_${FILEBOT_VER}/FileBot_${FILEBOT_VER}-portable.tar.xz -O /filebot/filebot.tar.xz \
@@ -145,14 +164,17 @@ RUN if [ "${WITH_FILEBOT}" == "YES" ]; then \
         && tar xvf chromaprint-fpcalc-${CHROMAPRINT_VER}-linux-x86_64.tar.gz \
         && mv chromaprint-fpcalc-${CHROMAPRINT_VER}-linux-x86_64/fpcalc /usr/local/bin \
         && strip -s /usr/local/bin/fpcalc \
-        && apk del binutils wget \
-        && rm -rf /var/cache/apk/* /tmp/* /filebot/FileBot_${FILEBOT_VER}-portable.tar.xz /filebot/chromaprint-fpcalc-${CHROMAPRINT_VER}-linux-x86_64.tar.gz /filebot/chromaprint-fpcalc-${CHROMAPRINT_VER}-linux-x86_64 \
+        && apk del --no-cache binutils wget \
+        && rm -rf /tmp/* \
+                  /filebot/FileBot_${FILEBOT_VER}-portable.tar.xz \
+                  /filebot/chromaprint-fpcalc-${CHROMAPRINT_VER}-linux-x86_64.tar.gz\
+                  /filebot/chromaprint-fpcalc-${CHROMAPRINT_VER}-linux-x86_64 \
     ;fi
 
 COPY rootfs /
 VOLUME /data /config
 EXPOSE 8080
-RUN chmod +x /usr/local/bin/startup /etc/s6.d/*/*
+RUN chmod +x /usr/local/bin/startup
 
 ENTRYPOINT ["/usr/local/bin/startup"]
-CMD ["/bin/s6-svscan", "/etc/s6.d"]
+CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
