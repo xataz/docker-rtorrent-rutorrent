@@ -20,7 +20,7 @@ LABEL Description="rutorrent based on alpine" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="2018012401"
+      build_ver="2018020501"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
