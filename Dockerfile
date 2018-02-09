@@ -14,13 +14,13 @@ ENV UID=991 \
     PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 LABEL Description="rutorrent based on alpine" \
-      tags="latest" \
+      tags="" \
       maintainer="xataz <https://github.com/xataz>" \
       mediainfo_version="${MEDIAINFO_VER}" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="2018020501"
+      build_ver="201802092317"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
@@ -141,7 +141,7 @@ RUN export BUILD_DEPS="build-base \
 
 ARG WITH_FILEBOT=NO
 ARG FILEBOT_VER=4.7.9
-ARG CHROMAPRINT_VER=1.4.2
+ARG CHROMAPRINT_VER=1.4.3
 
 label filebot_version="${FILEBOT_VER}" \
       chromaprint_ver="${CHROMAPRINT_VER}"
