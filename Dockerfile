@@ -20,14 +20,13 @@ LABEL Description="rutorrent based on alpine" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="201802260500"
+      build_ver="201803050004"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
                         automake \
                         autoconf \
                         wget \
-                        subversion \
                         libressl-dev \
                         ncurses-dev \
                         curl-dev \
@@ -67,7 +66,7 @@ RUN export BUILD_DEPS="build-base \
                 cppunit==1.13.2-r1 \
     ## Download Sources
     && git clone https://github.com/esmil/mktorrent /tmp/mktorrent \
-    && svn checkout http://svn.code.sf.net/p/xmlrpc-c/code/stable /tmp/xmlrpc-c \
+    && git clone https://github.com/mirror/xmlrpc-c.git /tmp/xmlrpc-c \
     && git clone -b ${LIBTORRENT_VER} https://github.com/rakshasa/libtorrent.git /tmp/libtorrent \
     && git clone -b ${RTORRENT_VER} https://github.com/rakshasa/rtorrent.git /tmp/rtorrent \
     && wget http://mediaarea.net/download/binary/mediainfo/${MEDIAINFO_VER}/MediaInfo_CLI_${MEDIAINFO_VER}_GNU_FromSource.tar.gz -O /tmp/MediaInfo_CLI_${MEDIAINFO_VER}_GNU_FromSource.tar.gz \
@@ -100,7 +99,7 @@ RUN export BUILD_DEPS="build-base \
     && cd /tmp/MediaInfo_CLI_GNU_FromSource/MediaInfo/Project/GNU/CLI \
     && make install \
     ## Compile xmlrpc-c
-    && cd /tmp/xmlrpc-c \
+    && cd /tmp/xmlrpc-c/stable \
     && ./configure \
     && make -j ${NB_CORES} \
     && make install \
@@ -135,12 +134,10 @@ RUN export BUILD_DEPS="build-base \
     && strip -s /usr/local/bin/mktorrent \
     && strip -s /usr/local/bin/mediainfo \
     && apk del -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main --no-cache ${BUILD_DEPS} cppunit-dev \
-    && rm -rf /tmp/* \
-    && deluser svn \
-    && delgroup svnusers
+    && rm -rf /tmp/*
 
 ARG WITH_FILEBOT=NO
-ARG FILEBOT_VER=4.7.19
+ARG FILEBOT_VER=4.7.9
 ARG CHROMAPRINT_VER=1.4.3
 
 label filebot_version="${FILEBOT_VER}" \
