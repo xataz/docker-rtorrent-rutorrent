@@ -20,7 +20,7 @@ LABEL Description="rutorrent based on alpine" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="201803050500"
+      build_ver="201803060500"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
@@ -137,7 +137,7 @@ RUN export BUILD_DEPS="build-base \
     && rm -rf /tmp/*
 
 ARG WITH_FILEBOT=NO
-ARG FILEBOT_VER=4.9.7
+ARG FILEBOT_VER=4.7.9
 ARG CHROMAPRINT_VER=1.4.3
 
 label filebot_version="${FILEBOT_VER}" \
