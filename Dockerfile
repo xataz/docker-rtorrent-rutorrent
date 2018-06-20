@@ -20,7 +20,7 @@ LABEL Description="rutorrent based on alpine" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="201806201425"
+      build_ver="201806201432"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
@@ -32,7 +32,8 @@ RUN export BUILD_DEPS="build-base \
                         curl-dev \
                         zlib-dev \
                         libnl3-dev \
-                        libsigc++-dev" \
+                        libsigc++-dev \
+			linux-headers" \
     ## Download Package
     && apk add -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main --no-cache ${BUILD_DEPS} \
                 ffmpeg \
