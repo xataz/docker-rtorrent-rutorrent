@@ -20,7 +20,7 @@ LABEL Description="rutorrent based on alpine" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="201806201357"
+      build_ver="201806201408"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
@@ -30,10 +30,12 @@ RUN export BUILD_DEPS="build-base \
                         libressl-dev \
                         ncurses-dev \
                         curl-dev \
-                        zlib-dev" \
+                        zlib-dev \
+                        libnl3-dev" \
     ## Download Package
     && apk add -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main --no-cache ${BUILD_DEPS} \
                 ffmpeg \
+                libnl3 \
                 ca-certificates \
                 gzip \
                 zip \
