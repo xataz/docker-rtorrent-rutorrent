@@ -20,7 +20,7 @@ LABEL Description="rutorrent based on alpine" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="201806201408"
+      build_ver="201806201425"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
@@ -31,7 +31,8 @@ RUN export BUILD_DEPS="build-base \
                         ncurses-dev \
                         curl-dev \
                         zlib-dev \
-                        libnl3-dev" \
+                        libnl3-dev \
+                        libsigc++-dev" \
     ## Download Package
     && apk add -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main --no-cache ${BUILD_DEPS} \
                 ffmpeg \
@@ -109,12 +110,17 @@ RUN export BUILD_DEPS="build-base \
     && cd /tmp/libtorrent \
     && ./autogen.sh \
     && ./configure \
+        --disable-debug \
+		--disable-instrumentation \
     && make -j ${BUILD_CORES-$(grep -c "processor" /proc/cpuinfo)} \
     && make install \
     ## Compile rtorrent
     && cd /tmp/rtorrent \
     && ./autogen.sh \
-    && ./configure --with-xmlrpc-c \
+    && ./configure \
+        --enable-ipv6 \
+		--disable-debug \
+		--with-xmlrpc-c \
     && make -j ${BUILD_CORES-$(grep -c "processor" /proc/cpuinfo)} \
     && make install \
     ## Install Rutorrent
