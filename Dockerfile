@@ -3,7 +3,7 @@ FROM xataz/alpine:3.7
 ARG BUILD_CORES
 ARG MEDIAINFO_VER=0.7.99
 ARG RTORRENT_VER=v0.9.7
-ARG LIBTORRENT_VER=v0.13.7
+ARG LIBTORRENT_VER=v0.9.7
 ARG LIBZEN_VER=0.4.31
 
 ENV UID=991 \
@@ -20,7 +20,7 @@ LABEL Description="rutorrent based on alpine" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="201806201432"
+      build_ver="201806210600"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
