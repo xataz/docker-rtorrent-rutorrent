@@ -14,13 +14,13 @@ ENV UID=991 \
     PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 LABEL Description="rutorrent based on alpine" \
-      tags="" \
+      tags="latest" \
       maintainer="xataz <https://github.com/xataz>" \
       mediainfo_version="${MEDIAINFO_VER}" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="201807050400"
+      build_ver="201807050426"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
