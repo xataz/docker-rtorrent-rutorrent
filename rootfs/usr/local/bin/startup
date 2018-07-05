@@ -135,6 +135,10 @@ if [ ! -e /config/rtorrent/.rtorrent.rc ]; then
     ln -s /config/rtorrent/.rtorrent.rc /home/torrent/.rtorrent.rc
 else
     rm -f /home/torrent/.rtorrent.rc
+    grep -E "system.method.set_key|use_udp_trackers|peer_exchange" > /dev/null 2>&1
+    [ $? -ne 0 ] && mv /config/rtorrent/.rtorrent.rc /config/rtorrent/.rtorrent.rc.old \
+                && mv /home/torrent/.rtorrent.rc /config/rtorrent/.rtorrent.rc \
+                && f_log INF "Migrate to 0.9.7 configuration format, backup file in /config/rtorrent/.rtorrent.rc.old"
     ln -s /config/rtorrent/.rtorrent.rc /home/torrent/.rtorrent.rc
 fi
 
@@ -146,11 +150,11 @@ if [ -e /filebot ]; then
     mkdir -p /data/Media/Music
     chown -R ${USER_NAME}:${GROUP_NAME} /filebot
 
-    grep "system.method.set_key=event.download.finished" /home/torrent/.rtorrent.rc > /dev/null 2>&1
-    [ $? -ne 0 ] && echo 'system.method.set_key=event.download.finished,filebot,"execute={/usr/local/bin/postdl,$d.get_base_path=,$d.get_name=,$d.get_custom1=}"' >> /home/torrent/.rtorrent.rc
+    grep "method.set_key=event.download.finished" /home/torrent/.rtorrent.rc > /dev/null 2>&1
+    [ $? -ne 0 ] && echo 'method.set_key = event.download.finished,filebot,"execute2={/usr/local/bin/postdl,$d.base_path=,$d.name=,$d.custom1=}"' >> /home/torrent/.rtorrent.rc
 
-    grep "system.method.set_key=event.download.erased" /home/torrent/.rtorrent.rc > /dev/null 2>&1
-    [ $? -ne 0 ] && echo 'system.method.set_key=event.download.erased,filebot_cleaner,"execute=/usr/local/bin/postrm"' >> /home/torrent/.rtorrent.rc
+    grep "method.set_key=event.download.erased" /home/torrent/.rtorrent.rc > /dev/null 2>&1
+    [ $? -ne 0 ] && echo 'method.set_key = event.download.erased,filebot_cleaner,"execute2=/usr/local/bin/postrm"' >> /home/torrent/.rtorrent.rc
 
     sed -e 's#<FILEBOT_RENAME_MOVIES>#'"$FILEBOT_RENAME_MOVIES"'#' \
         -e 's#<FILEBOT_RENAME_METHOD>#'"$FILEBOT_RENAME_METHOD"'#' \
@@ -161,6 +165,7 @@ if [ -e /filebot ]; then
     chmod +x /usr/local/bin/post*
 fi
 f_log SUC "Generate configuration done"
+
 
 f_log INF "Install plowshare ..."
 if [ -e /home/torrent/.config/plowshare ]; then
