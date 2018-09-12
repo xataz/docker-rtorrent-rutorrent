@@ -1,4 +1,4 @@
-FROM xataz/alpine:3.7
+FROM xataz/alpine:3.8
 
 ARG BUILD_CORES
 ARG MEDIAINFO_VER=0.7.99
@@ -20,7 +20,7 @@ LABEL Description="rutorrent based on alpine" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="201807050426"
+      build_ver="201809130020"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
@@ -33,7 +33,7 @@ RUN export BUILD_DEPS="build-base \
                         zlib-dev \
                         libnl3-dev \
                         libsigc++-dev \
-			            linux-headers" \
+                        linux-headers" \
     ## Download Package
     && apk add -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main --no-cache ${BUILD_DEPS} \
                 ffmpeg \
@@ -149,7 +149,7 @@ ARG WITH_FILEBOT=NO
 ARG FILEBOT_VER=4.7.9
 ARG CHROMAPRINT_VER=1.4.3
 
-label filebot_version="${FILEBOT_VER}" \
+ENV filebot_version="${FILEBOT_VER}" \
       chromaprint_ver="${CHROMAPRINT_VER}"
 
 ENV FILEBOT_RENAME_METHOD="symlink" \

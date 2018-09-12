@@ -149,10 +149,10 @@ if [ -e /filebot ]; then
     mkdir -p /data/Media/Music
     chown -R ${USER_NAME}:${GROUP_NAME} /filebot
 
-    grep "method.set_key=event.download.finished" /home/torrent/.rtorrent.rc > /dev/null 2>&1
+    grep -E "method.set_key.*event.download.finished" /home/torrent/.rtorrent.rc > /dev/null 2>&1
     [ $? -ne 0 ] && echo 'method.set_key = event.download.finished,filebot,"execute2={/usr/local/bin/postdl,$d.base_path=,$d.name=,$d.custom1=}"' >> /home/torrent/.rtorrent.rc
 
-    grep "method.set_key=event.download.erased" /home/torrent/.rtorrent.rc > /dev/null 2>&1
+    grep -E "method.set_key.*event.download.erased" /home/torrent/.rtorrent.rc > /dev/null 2>&1
     [ $? -ne 0 ] && echo 'method.set_key = event.download.erased,filebot_cleaner,"execute2=/usr/local/bin/postrm"' >> /home/torrent/.rtorrent.rc
 
     sed -e 's#<FILEBOT_RENAME_MOVIES>#'"$FILEBOT_RENAME_MOVIES"'#' \
@@ -177,6 +177,7 @@ fi
 [[ $? == 0 ]]; f_log SUC "Install plowshare done" || (f_log ERR "Install plowshare failed" && exit 1)
 
 f_log INF "Apply permissions ..."
+mkdir -p /run/nginx
 for folder in /data /var/www /home/torrent /var/lib/nginx /etc/php7 /etc/nginx /var/log /tmp /config /etc/supervisor; do
     find ${folder} ! -user torrent -exec chown ${USER_NAME}:${GROUP_NAME} {} \;
 done
