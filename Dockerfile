@@ -1,4 +1,4 @@
-FROM xataz/alpine:3.8
+FROM alpine:3.8
 
 ARG BUILD_CORES
 ARG MEDIAINFO_VER=0.7.99
@@ -20,7 +20,7 @@ LABEL Description="rutorrent based on alpine" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="201809130020"
+      build_ver="201809130248"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
@@ -33,9 +33,11 @@ RUN export BUILD_DEPS="build-base \
                         zlib-dev \
                         libnl3-dev \
                         libsigc++-dev \
-                        linux-headers" \
+                        linux-headers \
+                        cppunit-dev" \
     ## Download Package
-    && apk add -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main --no-cache ${BUILD_DEPS} \
+    && apk upgrade --no-cache \
+    && apk add --no-cache ${BUILD_DEPS} \
                 ffmpeg \
                 libnl3 \
                 ca-certificates \
@@ -66,8 +68,7 @@ RUN export BUILD_DEPS="build-base \
                 bash \
                 git \
                 sox \
-                cppunit-dev==1.13.2-r1 \
-                cppunit==1.13.2-r1 \
+                cppunit \
     ## Download Sources
     && git clone https://github.com/esmil/mktorrent /tmp/mktorrent \
     && git clone https://github.com/mirror/xmlrpc-c.git /tmp/xmlrpc-c \
@@ -142,7 +143,7 @@ RUN export BUILD_DEPS="build-base \
     && strip -s /usr/local/bin/rtorrent \
     && strip -s /usr/local/bin/mktorrent \
     && strip -s /usr/local/bin/mediainfo \
-    && apk del -X http://dl-cdn.alpinelinux.org/alpine/v3.6/main --no-cache ${BUILD_DEPS} cppunit-dev \
+    && apk del --no-cache ${BUILD_DEPS} \
     && rm -rf /tmp/*
 
 ARG WITH_FILEBOT=NO

@@ -42,7 +42,7 @@ else
 fi
 
 f_log INF "Build xataz/rtorrent-rutorrent:stable ..."
-docker build --build-arg RTORRENT_VER=0.9.6 --build-arg LIBTORRENT_VER=0.13.6 -t xataz/rtorrent-rutorrent:stable .
+docker build --build-arg RTORRENT_VER=0.9.6 --build-arg LIBTORRENT_VER=0.13.6 -t xataz/rtorrent-rutorrent:stable . > /tmp/build.log 2>&1
 if [ $? -eq 0 ]; then
     f_log SUC "Build xataz/rtorrent-rutorrent:stable successful"
 else
