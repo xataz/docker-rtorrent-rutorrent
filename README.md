@@ -8,6 +8,12 @@
 [![](https://images.microbadger.com/badges/version/xataz/rtorrent-rutorrent:filebot.svg)](https://microbadger.com/images/xataz/rtorrent-rutorrent:filebot "Get your own version badge on microbadger.com")
 [![](https://images.microbadger.com/badges/image/xataz/rtorrent-rutorrent:filebot.svg)](https://microbadger.com/images/xataz/rtorrent-rutorrent:filebot "Get your own image badge on microbadger.com")
 
+[![](https://images.microbadger.com/badges/version/xataz/rtorrent-rutorrent:stable.svg)](https://microbadger.com/images/xataz/rtorrent-rutorrent:stable "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/xataz/rtorrent-rutorrent:stable.svg)](https://microbadger.com/images/xataz/rtorrent-rutorrent:stable "Get your own image badge on microbadger.com")
+
+[![](https://images.microbadger.com/badges/version/xataz/rtorrent-rutorrent:stable-filebot.svg)](https://microbadger.com/images/xataz/rtorrent-rutorrent:stable-filebot "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/xataz/rtorrent-rutorrent:stable-filebot.svg)](https://microbadger.com/images/xataz/rtorrent-rutorrent:stable-filebot "Get your own image badge on microbadger.com")
+
 
 > This image is build and push with [drone.io](https://github.com/drone/drone), a circle-ci like self-hosted.
 > If you don't trust, you can build yourself.
@@ -41,11 +47,11 @@ rtorrent is the popular Bittorrent client.
 ## BUILD IMAGE
 ### Build arguments
 * BUILD_CORES : Number of cpu's core for compile (default : empty for use all cores)
-* MEDIAINFO_VER : Mediainfo version (default : 0.7.92.1)
-* RTORRENT_VER : rtorrent version (default : 0.9.6)
-* LIBTORRENT_VER : libtorrent version (default : 0.13.6)
+* MEDIAINFO_VER : Mediainfo version (default : 0.7.99)
+* RTORRENT_VER : rtorrent version (default : 0.9.7)
+* LIBTORRENT_VER : libtorrent version (default : 0.13.7)
 * WITH_FILEBOT : Choose if install filebot (default : no)
-* FILEBOT_VER : filebot version (default : 4.7.7)
+* FILEBOT_VER : filebot version (default : 4.7.9)
 
 ### simple build
 ```shell
