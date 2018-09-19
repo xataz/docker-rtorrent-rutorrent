@@ -5,6 +5,7 @@ ARG MEDIAINFO_VER=0.7.99
 ARG RTORRENT_VER=v0.9.7
 ARG LIBTORRENT_VER=v0.13.7
 ARG LIBZEN_VER=0.4.31
+ARG GEOIP_VER=1.1.1
 
 ENV UID=991 \
     GID=991 \
@@ -49,6 +50,7 @@ RUN export BUILD_DEPS="build-base \
                 tini \
                 supervisor \
                 geoip \
+                geoip-dev \
                 su-exec \
                 nginx \
                 php7 \
@@ -57,6 +59,9 @@ RUN export BUILD_DEPS="build-base \
                 php7-opcache \
                 php7-apcu \
                 php7-mbstring \
+                php7-ctype \
+                php7-pear \
+                php7-dev \
                 libressl \
                 file \
                 findutils \
@@ -140,6 +145,15 @@ RUN export BUILD_DEPS="build-base \
     ## Install plowshare
     && cd /tmp/plowshare \
     && make \
+    ## Install geoip files
+    && mkdir -p /usr/share/GeoIP \
+    && cd /usr/share/GeoIP \
+    && wget https://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz \
+    && wget https://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz \
+    && gzip -d *.gz \
+    && rm -f *.gz \
+    && pecl install geoip-${GEOIP_VER} \
+    && chmod +x /usr/lib/php7/modules/geoip.so \
     ## cleanup
     && strip -s /usr/local/bin/rtorrent \
     && strip -s /usr/local/bin/mktorrent \
