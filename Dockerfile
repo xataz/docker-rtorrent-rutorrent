@@ -21,7 +21,7 @@ LABEL Description="rutorrent based on alpine" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="201809202251"
+      build_ver="201810281500"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
@@ -62,6 +62,7 @@ RUN export BUILD_DEPS="build-base \
                 php7-ctype \
                 php7-pear \
                 php7-dev \
+		php7-sockets \
                 libressl \
                 file \
                 findutils \
