@@ -134,11 +134,14 @@ if [ ! -e /config/rtorrent/.rtorrent.rc ]; then
     mv /home/torrent/.rtorrent.rc /config/rtorrent/.rtorrent.rc
     ln -s /config/rtorrent/.rtorrent.rc /home/torrent/.rtorrent.rc
 else
-    grep -E "system.method.set_key|use_udp_trackers|peer_exchange" /config/rtorrent/.rtorrent.rc > /dev/null 2>&1
-    [ $? -ne 0 ] && mv /config/rtorrent/.rtorrent.rc /config/rtorrent/.rtorrent.rc.old \
-                && mv /home/torrent/.rtorrent.rc /config/rtorrent/.rtorrent.rc \
-                && f_log INF "Migrate to 0.9.7 configuration format, backup file in /config/rtorrent/.rtorrent.rc.old"
-    ln -sf /config/rtorrent/.rtorrent.rc /home/torrent/.rtorrent.rc
+    rtorrent -h | head -1 | grep "0.9.7"
+    if [ $? -eq 0 ]; then
+        grep -E "system.method.set_key|use_udp_trackers|peer_exchange" /config/rtorrent/.rtorrent.rc > /dev/null 2>&1
+        [ $? -eq 0 ] && mv /config/rtorrent/.rtorrent.rc /config/rtorrent/.rtorrent.rc.old \
+                    && mv /home/torrent/.rtorrent.rc /config/rtorrent/.rtorrent.rc \
+                    && f_log INF "Migrate to 0.9.7 configuration format, backup file in /config/rtorrent/.rtorrent.rc.old"
+        ln -sf /config/rtorrent/.rtorrent.rc /home/torrent/.rtorrent.rc
+    fi
 fi
 
 ## Filebot
