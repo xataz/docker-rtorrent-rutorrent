@@ -12,6 +12,7 @@ ENV UID=991 \
     WEBROOT=/ \
     PORT_RTORRENT=45000 \
     DHT_RTORRENT=off \
+    DISABLE_PERM_DATA=false \
     PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 LABEL Description="rutorrent based on alpine" \
@@ -21,7 +22,7 @@ LABEL Description="rutorrent based on alpine" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="201810281500"
+      build_ver="201811142000"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \

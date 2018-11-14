@@ -179,12 +179,18 @@ else
 fi
 [[ $? == 0 ]]; f_log SUC "Install plowshare done" || (f_log ERR "Install plowshare failed" && exit 1)
 
-f_log INF "Apply permissions ..."
+f_log INF "Apply system permissions ..."
 mkdir -p /run/nginx
-for folder in /data /var/www /home/torrent /var/lib/nginx /etc/php7 /etc/nginx /var/log /tmp /config /etc/supervisor; do
+for folder in /var/www /home/torrent /var/lib/nginx /etc/php7 /etc/nginx /var/log /tmp /config /etc/supervisor; do
     find ${folder} ! -user torrent -exec chown ${USER_NAME}:${GROUP_NAME} {} \;
 done
-f_log SUC "Apply permissions done"
+f_log SUC "Apply system permissions done"
+
+if [ "$DISABLE_PERM_DATA" == "true" ]; then
+    f_log INF "Apply data permissions ..."
+    find /data ! -user torrent -exec chown ${USER_NAME}:${GROUP_NAME} {} \;
+    f_log SUC "Apply data permissions done"
+fi
 
 rm -f /data/.session/rtorrent.lock
 
