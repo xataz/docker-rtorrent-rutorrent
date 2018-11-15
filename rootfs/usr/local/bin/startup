@@ -186,7 +186,7 @@ for folder in /var/www /home/torrent /var/lib/nginx /etc/php7 /etc/nginx /var/lo
 done
 f_log SUC "Apply system permissions done"
 
-if [ "$DISABLE_PERM_DATA" == "true" ]; then
+if [ "$DISABLE_PERM_DATA" == "false" ]; then
     f_log INF "Apply data permissions ..."
     find /data ! -user torrent -exec chown ${USER_NAME}:${GROUP_NAME} {} \;
     f_log SUC "Apply data permissions done"
