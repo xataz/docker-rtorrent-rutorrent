@@ -86,8 +86,8 @@ if [ "$WEBROOT" != "/" ]; then
     done
     ## Add custom themes
     [ "$(ls /config/custom_themes/)" ] && for custom_theme in $(ls /config/custom_themes); do
-        if [ ! -d /var/www/html${WEBROOT}/theme/themes/${custom_theme} ]; then
-            ln -s /config/custom_themes/${custom_theme} /var/www/html${WEBROOT}/theme/themes/${custom_theme}
+        if [ ! -d /var/www/html${WEBROOT}/plugins/theme/themes/${custom_theme} ]; then
+            ln -s /config/custom_themes/${custom_theme} /var/www/html${WEBROOT}/plugins/theme/themes/${custom_theme}
         fi
     done
 else
