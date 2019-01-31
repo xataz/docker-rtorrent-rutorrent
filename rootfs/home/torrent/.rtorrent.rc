@@ -11,6 +11,7 @@ log.add_output = "debug", "rtorrent"
 directory.default.set = /data/torrents
 session.path.set = /data/.session
 protocol.encryption.set = allow_incoming, try_outgoing, enable_retry
+ip = <WAN_IP>
 
 ## Network
 network.scgi.open_port = 0.0.0.0:5000

@@ -127,7 +127,7 @@ else
 fi
 
 
-sed -i -e 's|<PORT_RTORRENT>|'$PORT_RTORRENT'|g' -e 's|<DHT_RTORRENT>|'$DHT_RTORRENT'|g' /home/torrent/.rtorrent.rc
+sed -i -e 's|<PORT_RTORRENT>|'$PORT_RTORRENT'|g' -e 's|<DHT_RTORRENT>|'$DHT_RTORRENT'|g' -e 's|<WAN_IP>|'$(curl https://ipecho.net/plain)'|' /home/torrent/.rtorrent.rc
 
 ## externalize rtorrent configuration
 if [ ! -e /config/rtorrent/.rtorrent.rc ]; then

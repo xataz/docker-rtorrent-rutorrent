@@ -76,6 +76,8 @@ docker build -t xataz/rtorrent-rutorrent:custom --build-arg WITH_FILEBOT=YES --b
 * FILEBOT_RENAME_MUSICS : Regex for rename musics (default : "{n}/{fn}")
 * FILEBOT_RENAME_SERIES : Regex for rename series (default : "{n}/Season {s.pad(2)}/{s00e00} - {t}")
 * FILEBOT_RENAME_ANIMES : Regex for rename animes (default : "{n}/{e.pad(3)} - {t}")
+* FILEBOT_LANG : (default : fr)
+* FILEBOT_CONFLICT : (default : skip)
 * DISABLE_PERM_DATA : (default : false)
 
 ### Volumes
