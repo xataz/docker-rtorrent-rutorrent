@@ -31,7 +31,7 @@ f_log() {
 
 
 # Push rtorrent-rutorrent
-for tag in latest filebot latest-filebot stable stable-filebot filebot-stable; do
+for tag in latest filebot latest-filebot; do
     f_log INF "Push xataz/rtorrent-rutorrent:$tag"
     docker push xataz/rtorrent-rutorrent:$tag
     if [ $? -ne 0 ]; then
