@@ -1,4 +1,5 @@
 ## Logs
+system.daemon.set = true
 log.open_file = "rtorrent", "/tmp/rtorrent.log"
 log.add_output = "info", "rtorrent"
 log.add_output = "critical", "rtorrent"

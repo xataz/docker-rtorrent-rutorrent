@@ -1,0 +1,5 @@
+#!/bin/sh
+
+/usr/sbin/nginx
+
+s6-svscanctl -qz /etc/s6.d

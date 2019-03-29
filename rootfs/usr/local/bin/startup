@@ -127,7 +127,7 @@ else
 fi
 
 
-sed -i -e 's|<PORT_RTORRENT>|'$PORT_RTORRENT'|g' -e 's|<DHT_RTORRENT>|'$DHT_RTORRENT'|g' -e 's|<WAN_IP>|'$(curl https://ipecho.net/plain)'|' /home/torrent/.rtorrent.rc
+sed -i -e 's|<PORT_RTORRENT>|'$PORT_RTORRENT'|g' -e 's|<DHT_RTORRENT>|'$DHT_RTORRENT'|g' -e 's|<WAN_IP>|'$(curl https://ipecho.net/plain 2> /dev/null)'|' /home/torrent/.rtorrent.rc
 
 ## externalize rtorrent configuration
 if [ ! -e /config/rtorrent/.rtorrent.rc ]; then
@@ -140,6 +140,8 @@ else
         [ $? -eq 0 ] && mv /config/rtorrent/.rtorrent.rc /config/rtorrent/.rtorrent.rc.old \
                     && mv /home/torrent/.rtorrent.rc /config/rtorrent/.rtorrent.rc \
                     && f_log INF "Migrate to 0.9.7 configuration format, backup file in /config/rtorrent/.rtorrent.rc.old"
+        grep "system.daemon.set" /config/rtorrent/.rtorrent.rc > /dev/null 2>&1
+        [ $? -ne 0 ] && echo "system.daemon.set = true" >> /config/rtorrent/.rtorrent.rc
         ln -sf /config/rtorrent/.rtorrent.rc /home/torrent/.rtorrent.rc
     fi
 fi
@@ -181,9 +183,11 @@ fi
 
 f_log INF "Apply system permissions ..."
 mkdir -p /run/nginx
-for folder in /var/www /home/torrent /var/lib/nginx /etc/php7 /etc/nginx /var/log /tmp /config /etc/supervisor; do
+for folder in /var/www /home/torrent /var/lib/nginx /etc/php7 /etc/nginx /var/log /tmp /config /etc/s6.d; do
     find ${folder} ! -user torrent -exec chown ${USER_NAME}:${GROUP_NAME} {} \;
 done
+find /etc/s6.d -type f -exec chmod +x {} \;
+
 f_log SUC "Apply system permissions done"
 
 if [ "$DISABLE_PERM_DATA" == "false" ]; then
@@ -194,8 +198,4 @@ fi
 
 rm -f /data/.session/rtorrent.lock
 
-if [ $# -eq 0 ]; then
-    exec su-exec ${USER_NAME}:${GROUP_NAME} /sbin/tini -- supervisord -c /etc/supervisor/supervisord.conf
-else
-    exec su-exec ${USER_NAME}:${GROUP_NAME} /sbin/tini -- $@
-fi
+exec su-exec ${USER_NAME}:${GROUP_NAME} $@

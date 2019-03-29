@@ -48,8 +48,7 @@ RUN export BUILD_DEPS="build-base \
                 unrar \
                 curl \
                 c-ares \
-                tini \
-                supervisor \
+                s6 \
                 geoip \
                 geoip-dev \
                 su-exec \
@@ -63,7 +62,7 @@ RUN export BUILD_DEPS="build-base \
                 php7-ctype \
                 php7-pear \
                 php7-dev \
-		php7-sockets \
+		        php7-sockets \
                 libressl \
                 file \
                 findutils \
@@ -150,10 +149,12 @@ RUN export BUILD_DEPS="build-base \
     ## Install geoip files
     && mkdir -p /usr/share/GeoIP \
     && cd /usr/share/GeoIP \
-    && wget https://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz \
-    && wget https://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz \
-    && gzip -d *.gz \
-    && rm -f *.gz \
+    && wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz \
+    && wget https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.tar.gz \
+    && tar xzf GeoLite2-City.tar.gz \
+    && tar xzf GeoLite2-Country.tar.gz \
+    && rm -f *.tar.gz \
+    && mv GeoLite2-*/*.mmdb . \
     && pecl install geoip-${GEOIP_VER} \
     && chmod +x /usr/lib/php7/modules/geoip.so \
     ## cleanup
@@ -203,4 +204,4 @@ EXPOSE 8080
 RUN chmod +x /usr/local/bin/startup
 
 ENTRYPOINT ["/usr/local/bin/startup"]
-CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["/bin/s6-svscan", "/etc/s6.d"]
