@@ -62,7 +62,8 @@ RUN export BUILD_DEPS="build-base \
                 php7-ctype \
                 php7-pear \
                 php7-dev \
-		        php7-sockets \
+		php7-sockets \
+		php7-phar \
                 libressl \
                 file \
                 findutils \
@@ -139,6 +140,8 @@ RUN export BUILD_DEPS="build-base \
     && git clone https://github.com/mcrapet/plowshare /tmp/plowshare \
     && git clone https://github.com/xombiemp/rutorrentMobile.git /var/www/html/rutorrent/plugins/mobile \    
     && git clone https://github.com/Phlooo/ruTorrent-MaterialDesign.git /var/www/html/rutorrent/plugins/theme/themes/materialdesign \
+    && git clone https://github.com/Micdu70/geoip2-rutorrent /var/www/html/rutorrent/plugins/geoip2 \
+    && rm -rf /var/www/html/rutorrent/plugins/geoip \
     && sed -i "s/'mkdir'.*$/'mkdir',/" /tmp/rutorrent-thirdparty-plugins/filemanager/flm.class.php \
     && sed -i 's#.*/usr/bin/rar.*##' /tmp/rutorrent-thirdparty-plugins/filemanager/conf.php \
     && mv /tmp/rutorrent-thirdparty-plugins/* /var/www/html/rutorrent/plugins/ \
@@ -155,6 +158,7 @@ RUN export BUILD_DEPS="build-base \
     && tar xzf GeoLite2-Country.tar.gz \
     && rm -f *.tar.gz \
     && mv GeoLite2-*/*.mmdb . \
+    && cp *.mmdb /var/www/html/rutorrent/plugins/geoip2/database/ \
     && pecl install geoip-${GEOIP_VER} \
     && chmod +x /usr/lib/php7/modules/geoip.so \
     ## cleanup
