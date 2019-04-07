@@ -158,7 +158,7 @@ RUN export BUILD_DEPS="build-base \
     && tar xzf GeoLite2-Country.tar.gz \
     && rm -f *.tar.gz \
     && mv GeoLite2-*/*.mmdb . \
-    && cp *.mmdb /var/www/html/rutorrent/plugins/geoip2/database/ \
+    && cp *.mmdb /var/www/html/torrent/plugins/geoip2/database/ \
     && pecl install geoip-${GEOIP_VER} \
     && chmod +x /usr/lib/php7/modules/geoip.so \
     ## cleanup
