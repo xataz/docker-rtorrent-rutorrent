@@ -184,7 +184,7 @@ ENV FILEBOT_RENAME_METHOD="symlink" \
     FILEBOT_CONFLICT=skip
 
 RUN if [ "${WITH_FILEBOT}" == "YES" ]; then \
-        apk add --no-cache openjdk8-jre java-jna-native binutils wget \
+        apk add --no-cache openjdk8-jre java-jna-native binutils wget nss \
         && mkdir /filebot \
         && cd /filebot \
         && wget http://downloads.sourceforge.net/project/filebot/filebot/FileBot_${FILEBOT_VER}/FileBot_${FILEBOT_VER}-portable.tar.xz -O /filebot/filebot.tar.xz \
