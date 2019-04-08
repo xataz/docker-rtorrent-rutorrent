@@ -22,7 +22,7 @@ LABEL Description="rutorrent based on alpine" \
       libtorrent_version="${LIBTORRENT_VER}" \
       rtorrent_version="${RTORRENT_VER}" \
       libzen_version="${LIBZEN_VER}" \
-      build_ver="201811142000"
+      build_ver="201904081410"
 
 RUN export BUILD_DEPS="build-base \
                         libtool \
@@ -35,7 +35,8 @@ RUN export BUILD_DEPS="build-base \
                         zlib-dev \
                         libnl3-dev \
                         libsigc++-dev \
-                        linux-headers" \
+                        linux-headers \
+			py-pip" \
     ## Download Package
     && if [ "$RTORRENT_VER" == "0.9.6" ]; then CPPUNIT_VER="==1.13.2-r1"; fi \
     && apk upgrade --no-cache \
@@ -75,6 +76,7 @@ RUN export BUILD_DEPS="build-base \
                 bash \
                 git \
                 sox \
+		python \
                 cppunit-dev${CPPUNIT_VER} \
                 cppunit${CPPUNIT_VER} \
     ## Download Sources
@@ -161,6 +163,8 @@ RUN export BUILD_DEPS="build-base \
     && cp *.mmdb /var/www/html/torrent/plugins/geoip2/database/ \
     && pecl install geoip-${GEOIP_VER} \
     && chmod +x /usr/lib/php7/modules/geoip.so \
+    ## Install cfscrape
+    && pip install cfscrape \
     ## cleanup
     && strip -s /usr/local/bin/rtorrent \
     && strip -s /usr/local/bin/mktorrent \
