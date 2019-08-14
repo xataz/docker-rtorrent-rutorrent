@@ -170,7 +170,6 @@ if [ -e /filebot ]; then
 fi
 f_log SUC "Generate configuration done"
 
-
 f_log INF "Install plowshare ..."
 if [ -e /home/torrent/.config/plowshare ]; then
     su-exec ${USER_NAME}:${GROUP_NAME} plowmod --update > /dev/null 2>&1
@@ -194,6 +193,14 @@ if [ "$DISABLE_PERM_DATA" == "false" ]; then
     f_log INF "Apply data permissions ..."
     find /data ! -user torrent -exec chown ${USER_NAME}:${GROUP_NAME} {} \;
     f_log SUC "Apply data permissions done"
+fi
+
+## fix path initplugins (if already have .rtorrent.rc)
+grep -Eq " /nginx/" /home/torrent/.rtorrent.rc
+if [ $? -eq 0 ]; then
+    f_log INF "Fix path initplugins on .rtorrent.rc ..."
+    sed -i "s# /nginx/# /var/#g" /home/torrent/.rtorrent.rc
+    f_log SUC "Fix path initplugins done"
 fi
 
 rm -f /data/.session/rtorrent.lock
